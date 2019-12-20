@@ -2,13 +2,14 @@ const db = require('../database/dbConfig.js');
 
 module.exports = {
     add,
+    remove,
     getUsers,
     getUsersBy,
     getUsersById,
 };
 
 function getUsers() {
-    return db("users").select("id", "username").orderBy("id");
+    return db("users").select("id", "username", "password").orderBy("id");
 }
 
 function getUsersBy(filter) {
@@ -31,4 +32,11 @@ function getUsersById(id) {
         .select("id", "username")
         .where({ id })
         .first();
+}
+
+function remove(id) {
+    return db('users')
+        .del()
+        .where({ id })
+
 }
