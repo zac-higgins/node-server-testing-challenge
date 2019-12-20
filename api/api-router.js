@@ -9,7 +9,7 @@ router.use('/users', usersRouter);
 const projectName = 'node-backend-starter';
 
 router.get('/', (req, res) => {
-    res.json({ message: `Project: ${projectName} is up and running!` })
+    res.status(200).json({ message: `Project: ${projectName} is up and running!` })
 })
 
 module.exports = router;

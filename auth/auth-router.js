@@ -25,8 +25,12 @@ router.post('/login', (req, res) => {
         .first()
         .then(user => {
             if (user && bcrypt.compareSync(password, user.password)) {
-                req.session.user = user;
-                res.status(200).json({ message: `Welcome ${user.username}!` });
+                const token = signToken(user);
+
+                res.status(200).json({
+                    token,
+                    message: `Welcome ${user.username}!`
+                });
             } else {
                 res.status(401).json({ message: "Invalid credentials" });
             }
@@ -36,18 +40,18 @@ router.post('/login', (req, res) => {
         });
 });
 
-router.get('/logout', (req, res) => {
-    if (req.session) {
-        req.session.destroy(err => {
-            if (err) {
-                res.json({ message: 'You can checkout any time you like, but you never can leave' })
-            } else {
-                res.status(200).json({ message: "bye, thanks for playing!" })
-            }
-        })
-    } else {
-        res.status(200).json({ message: "You were never here to begin with" })
-    }
-})
+function signToken(user) {
+    const payload = {
+        username: user.username
+    };
+
+    const secret = process.env.JWT_SECRET || "This is the secret";
+
+    const options = {
+        expiresIn: "24h",
+    };
+
+    return jwt.sign(payload, secret, options);
+}
 
 module.exports = router;

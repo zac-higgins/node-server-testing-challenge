@@ -28,13 +28,19 @@ router.post('/', (req, res) => {
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
 
-    Users.remove(id)
-        .then(() => {
-            Users.getUsers()
-                .then(users => {
-                    res.json(users);
-                })
-                .catch(err => res.send(err));
+    Users.getUsersById(id)
+        .then(user => {
+            if (user) {
+                Users.remove(id)
+                    .then(() => {
+                        res.status(200).json({ message: "user deleted successfully" })
+                    })
+                    .catch(err => res.send(err));
+
+            } else {
+                res.status(404).json({ message: "no user by that id" })
+            }
+
         })
         .catch(err => res.send(err));
 });
